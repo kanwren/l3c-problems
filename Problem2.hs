@@ -42,13 +42,11 @@ kpartitions :: Int -> [a] -> [[[a]]]
 kpartitions _ [] = []
 kpartitions 0 _  = []
 kpartitions 1 xs = [[xs]]
-kpartitions k xs = go k xs (length xs)
-  where go 1 xs _ = [[xs]]
-        go k xs l = do
-          splitIx <- [1..(l - k + 1)]
-          let (left, right) = splitAt splitIx xs
-          rightParts <- go (k - 1) right (l - 1)
-          return $ left : rightParts
+kpartitions k xs = do
+  splitIx <- zipWith const [1..] $ drop (k - 1) xs
+  let (left, right) = splitAt splitIx xs
+  rightParts <- kpartitions (k - 1) right
+  return $ left : rightParts
 
 -- Convert base-10 list of digits to a number
 -- If this was restricted to Word8s, it would wrap after 255 and validate any
@@ -80,5 +78,7 @@ ipv4Partitions s = do
 -- There is not a trivial way to make sure that the output list of IPv4
 -- addresses will be unique, so a nub is unfortunately necessary to ensure
 -- uniqueness of results
+-- This will return an empty list for any String that does not consist of only
+-- digits
 possibleAddresses :: String -> [IPv4]
 possibleAddresses s = maybe [] (nub . ipv4Partitions) $ parseDigits s
