@@ -1,6 +1,15 @@
 -- Largest Contiguous Sum
 
+-- The simplest way to solve the largest contiguous sum is using Kadane's
+-- algorithm, which solves it in O(n) time and O(1) space
+
 module Problem3 where
 
+import Data.List (foldl')
+
 maxContSum :: [Integer] -> Integer
-maxContSum = undefined
+maxContSum = snd . foldl' kadane (0, 0)
+  where kadane (curMax, totalMax) x =
+          let curMax' = max curMax (curMax + x)
+              totalMax' = max totalMax curMax'
+           in (curMax', totalMax')
