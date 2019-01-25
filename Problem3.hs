@@ -12,6 +12,6 @@ import Data.List (foldl')
 maxContSum :: [Integer] -> Integer
 maxContSum = snd . foldl' kadane (0, 0)
   where kadane (curMax, totalMax) x =
-          let curMax' = max curMax (curMax + x)
+          let curMax' = max x (curMax + x)
               totalMax' = max totalMax curMax'
            in (curMax', totalMax')
