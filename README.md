@@ -17,4 +17,6 @@ Clarifications needed:
           valid?
         * Why would "2.5.5.0", "2.5.50.5" not be valid IPv4 addresses sliced
           from "25505011535"?
+        * Both examples would make sense if slices were not considered, and
+          "1.2.1.1" in the first example was a typo, but this is doubtful
     * Should the output list of IPv4 addresses be unique?
