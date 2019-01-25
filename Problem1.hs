@@ -3,7 +3,6 @@
 module Problem1 where
 
 -- Data type for an ordered binary trees
--- TODO: should the trees contain only unique elements?
 data Bin a = EmptyTree | TreeNode a (Bin a) (Bin a)
 
 singleton :: a -> Bin a

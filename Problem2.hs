@@ -1,10 +1,5 @@
 -- IPv4 Permutations
 
--- TODO: why would "1.1.2.1" not be a valid IPv4 address? It seems that "1121"
--- is a slice of the original String "11211", so why would it not be valid?
--- Why would "2.5.5.0", "2.5.50.5" not be valid IPv4 addresses sliced from
--- "25505011535"?
-
 module Problem2 where
 
 import Control.Monad ((>=>), guard)
@@ -83,6 +78,5 @@ ipv4Partitions s = do
 -- There is not a trivial way to make sure that the output list of IPv4
 -- addresses will be unique, so a nub is unfortunately necessary to ensure
 -- uniqueness of results
--- TODO: should the output list of IPv4 addresses be unique?
 possibleAddresses :: String -> [IPv4]
 possibleAddresses s = maybe [] (nub . ipv4Partitions) $ parseDigits s
