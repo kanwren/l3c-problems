@@ -29,24 +29,26 @@ slices :: Int -> [a] -> [[a]]
 slices s = tails >=> (drop s . inits)
 
 -- Given a list, return all possible partitions of the list into k nonempty
--- substrings
+-- substrings. This implementation does not work for infinite lists.
 --
 -- Strategy:
--- * Split at each point from 1 .. length - k + 1, enough to leave n - 1
+-- * Base case: partitioning a list into 1 sublist is just that list
+-- * Split at each point from 1 .. length - k + 1, enough to leave k - 1
 --   elements
--- * Generate all (kpartitions (k - 1)) of the second list
+-- * Generate k - 1 partitions of the second list recursively
 -- * Append the first list to each of the partitioned lists
--- * Concatenate all results
+-- * Concatenate/flatten all results through the list monad
 kpartitions :: Int -> [a] -> [[[a]]]
-kpartitions _ []  = []
-kpartitions 0 _   = []
-kpartitions 1 xs  = [[xs]]
-kpartitions k xs  = do
-  let len = length xs
-  splitIx <- [1..(len - k + 1)]
-  let (left, right) = splitAt splitIx xs
-  rightParts <- kpartitions (k - 1) right
-  return $ left : rightParts
+kpartitions _ [] = []
+kpartitions 0 _  = []
+kpartitions 1 xs = [[xs]]
+kpartitions k xs = go k xs (length xs)
+  where go 1 xs _ = [[xs]]
+        go k xs l = do
+          splitIx <- [1..(l - k + 1)]
+          let (left, right) = splitAt splitIx xs
+          rightParts <- go (k - 1) right (l - 1)
+          return $ left : rightParts
 
 -- Convert base-10 list of digits to a number
 -- If this was restricted to Word8s, it would wrap after 255 and validate any
