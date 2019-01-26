@@ -19,6 +19,7 @@ parseDigit :: Char -> Maybe Int
 parseDigit c
   | isDigit c = Just (digitToInt c)
   | otherwise = Nothing
+-- parseDigit = fmap digitToInt . mfilter isDigit . pure
 
 parseDigits :: String -> Maybe [Int]
 parseDigits = traverse parseDigit
@@ -29,7 +30,7 @@ slices :: Int -> [a] -> [[a]]
 slices s = tails >=> (drop s . inits)
 
 -- Given a list, return all possible partitions of the list into k nonempty
--- substrings. This implementation does not work for infinite lists.
+-- substrings.
 --
 -- Strategy:
 -- * Base case: partitioning a list into 1 sublist is just that list
@@ -46,7 +47,7 @@ kpartitions k xs = do
   splitIx <- zipWith const [1..] $ drop (k - 1) xs
   let (left, right) = splitAt splitIx xs
   rightParts <- kpartitions (k - 1) right
-  return $ left : rightParts
+  return (left : rightParts)
 
 -- Convert base-10 list of digits to a number
 -- If this was restricted to Word8s, it would wrap after 255 and validate any
@@ -73,12 +74,12 @@ ipv4Partitions s = do
   octets <- kpartitions 4 slice
   guard $ all validOctetGroup octets
   let [o1, o2, o3, o4] = map joinOctet octets
-  return $ IPv4 o1 o2 o3 o4
+  return (IPv4 o1 o2 o3 o4)
 
 -- There is not a trivial way to make sure that the output list of IPv4
 -- addresses will be unique, so a nub is unfortunately necessary to ensure
 -- uniqueness of results
--- This will return an empty list for any String that does not consist of only
--- digits
+-- This will return an empty list for any String that contains non-digits
+-- Due to the nature of the error checking, it does not process infinite input
 possibleAddresses :: String -> [IPv4]
-possibleAddresses s = maybe [] (nub . ipv4Partitions) $ parseDigits s
+possibleAddresses = maybe [] (nub . ipv4Partitions) . parseDigits
