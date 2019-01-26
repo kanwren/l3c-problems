@@ -10,9 +10,10 @@ singleton x = TreeNode x EmptyTree EmptyTree
 
 insert :: Ord a => a -> Bin a -> Bin a
 insert x EmptyTree = singleton x
-insert x tree@(TreeNode n lower higher) =
+insert x (TreeNode n lower higher) =
   case compare x n of
-    EQ -> tree
+    -- Update data in case of non-standard Ord/Eq implementation for a
+    EQ -> TreeNode x lower higher
     -- Assuming the trees aren't unique:
     -- EQ -> TreeNode n (insert x lower) higher
     LT -> TreeNode n (insert x lower) higher
