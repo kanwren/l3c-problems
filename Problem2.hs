@@ -24,6 +24,7 @@ parseDigit c
 parseDigits :: String -> Maybe [Int]
 parseDigits = traverse parseDigit
 
+-- Clarification: slice calculation is not necessary
 -- All possible contiguous slices of minimum size s
 -- Takes advantage of monadic Kleisli composition of lists
 slices :: Int -> [a] -> [[a]]
@@ -69,9 +70,11 @@ validOctetGroup [x, y, z] = x /= 0 && digitsToInt [x, y, z] <= 255
 validOctetGroup _         = False
 
 ipv4Partitions :: [Int] -> [IPv4]
-ipv4Partitions s = do
-  slice  <- slices 4 s
-  octets <- kpartitions 4 slice
+ipv4Partitions digits = do
+  -- Clarification: slice calculation is not necessary
+  -- slice  <- slices 4 digits
+  -- octets <- kpartitions 4 slice
+  octets <- kpartitions 4 digits
   guard $ all validOctetGroup octets
   let [o1, o2, o3, o4] = map joinOctet octets
   return (IPv4 o1 o2 o3 o4)
