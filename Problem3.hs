@@ -7,11 +7,12 @@ module Problem3 where
 
 import Data.List (foldl')
 
--- Need a strict fold (foldl') to avoid stack overflows from lazy foldl
--- This is more efficient over Integers than lazy evaluation
+-- Should use a strict fold (foldl') to avoid stack overflows from lazy foldl
+-- This is also more efficient over Integers than lazy evaluation
 maxContSum :: [Integer] -> Integer
 maxContSum = snd . foldl' kadane (0, 0)
   where kadane (curMax, totalMax) x =
-          let curMax' = max x (curMax + x)
+          let curMax'   = max x (curMax + x)
               totalMax' = max totalMax curMax'
            in (curMax', totalMax')
+
