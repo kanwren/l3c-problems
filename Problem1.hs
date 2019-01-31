@@ -3,7 +3,9 @@
 module Problem1 where
 
 -- Data type for a unique ordered binary trees
-data Bin a = EmptyTree | TreeNode a (Bin a) (Bin a)
+data Bin a = EmptyTree
+           | TreeNode a (Bin a) (Bin a)
+           deriving (Show, Eq)
 
 leaf :: a -> Bin a
 leaf x = TreeNode x EmptyTree EmptyTree
