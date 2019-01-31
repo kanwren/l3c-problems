@@ -2,9 +2,9 @@
 
 module Problem2 where
 
-import Control.Monad ((>=>), guard)
+import Control.Monad (guard)
 import Data.Char (isDigit, digitToInt)
-import Data.List (intercalate, inits, tails, foldl', nub)
+import Data.List (intercalate, foldl', nub)
 import Data.Word (Word8)
 
 type Octet = Word8
@@ -19,16 +19,9 @@ parseDigit :: Char -> Maybe Int
 parseDigit c
   | isDigit c = Just (digitToInt c)
   | otherwise = Nothing
--- parseDigit = fmap digitToInt . mfilter isDigit . pure
 
 parseDigits :: String -> Maybe [Int]
 parseDigits = traverse parseDigit
-
--- Clarification: slice calculation is not necessary
--- All possible contiguous slices of minimum size s
--- Takes advantage of monadic Kleisli composition of lists
-slices :: Int -> [a] -> [[a]]
-slices s = tails >=> (drop s . inits)
 
 -- Given a list, return all possible partitions of the list into k nonempty
 -- substrings.
@@ -61,7 +54,7 @@ joinOctet :: [Int] -> Octet
 joinOctet = fromIntegral . digitsToInt
 
 -- Determine whether a list of digits is a valid octet group
--- Assumes that the elements of xs are valid digits, i.e. 0 ≤ x ≤ 9 ∀ x ∈ xs
+-- Assumes that the elements of xs are valid digits
 validOctetGroup :: [Int] -> Bool
 validOctetGroup []        = False
 validOctetGroup [_]       = True
@@ -71,9 +64,6 @@ validOctetGroup _         = False
 
 ipv4Partitions :: [Int] -> [IPv4]
 ipv4Partitions digits = do
-  -- Clarification: slice calculation is not necessary
-  -- slice  <- slices 4 digits
-  -- octets <- kpartitions 4 slice
   octets <- kpartitions 4 digits
   guard $ all validOctetGroup octets
   let [o1, o2, o3, o4] = map joinOctet octets
@@ -83,6 +73,6 @@ ipv4Partitions digits = do
 -- addresses will be unique, so a nub is unfortunately necessary to ensure
 -- uniqueness of results
 -- This will return an empty list for any String that contains non-digits
--- Due to the nature of the error checking, it does not process infinite input
+-- Due to the nature of the digit validation, it does not handle infinite input
 possibleAddresses :: String -> [IPv4]
 possibleAddresses = maybe [] (nub . ipv4Partitions) . parseDigits
